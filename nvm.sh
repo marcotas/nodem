@@ -18,6 +18,8 @@ function main {
             remove_version $command;;
         list)
             list_versions;;
+        *)
+            show_help;;
     esac
 }
 
@@ -115,15 +117,32 @@ function remove_version {
     fi
 }
 
+# Shows help command
+function show_help {
+    bold "Usage: "
+    echo "    nvm <command> <version> <option>"
+    echo
+    bold "Available commands:"
+    echo "  - install <version>     Installs the node <version>."
+    echo "  - use <version> <--npm> Creates symbolic links for the <version> installed."
+    echo "  - remove <version>      Removes the node installed <version>."
+    echo "  - list                  Lists all installed node versions."
+    echo "  - help                  Shows this help."
+}
+
 # Escreve a versao em negrito se for a versao em uso
 function echo_bold_if_current {
     local version=$1
     local current_version=`node -v 2> /dev/null`
     if [[ $version == $current_version ]]; then
-        echo -e "    \e[1m$version\e[21m"
+        bold "    \e[1m$version\e[21m"
     else
         echo "    $version"
     fi
+}
+
+function bold {
+    echo -e "\e[1m$1\e[21m"
 }
 
 # Exit script if param is empty
