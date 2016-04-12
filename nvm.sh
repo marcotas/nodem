@@ -13,7 +13,7 @@ function main {
             install $command
             npm config set prefix $PREFIX;;
         use)
-            use_version $command;;
+            use_version $command $3;;
         remove)
             remove_version $command;;
         list)
@@ -57,6 +57,7 @@ function install {
 
 function use_version {
     local version=$1
+    local option=$2
     if [[ -z "$version" ]]; then
         warning "No version informed. Type: 'nvm use <version>'"
         list_versions
@@ -64,6 +65,10 @@ function use_version {
     fi
     must_have_version $version
     warning "Creating symbolic links. This requires root access."
+    if [[ ! -z $option ]]; then
+        sudo ln -sf $VERSIONS_DIR/$version/bin/npm /usr/local/bin/npm
+        success "Using npm version "`npm -v`
+    fi
     sudo ln -sf $VERSIONS_DIR/$version/bin/node /usr/local/bin/node-$version
     sudo ln -sf /usr/local/bin/node-$version /usr/local/bin/node
     success "Default version changed to $version"
