@@ -23,9 +23,9 @@ nvm help
 
 ## Commands
 The available commands are:
- - install <version>
- - use <version> --npm
- - remove <version>
+ - install \<version\>
+ - use \<version\> --npm
+ - remove \<version\>
  - list
  - help
 
