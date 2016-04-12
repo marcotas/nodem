@@ -12,5 +12,7 @@ sudo cp -vf nvm.sh /usr/local/bin/nvm
 sudo chmod +x /usr/local/bin/nvm
 
 echo 'export PATH=$HOME/.nvm/bin:$PATH # Add NVM to PATH for scripting' >> ~/.profile
+echo 'source $HOME/.profile' >> ~/.zshrc
+source ~/.profile
 
 echo -e "\e[32mnvm installed successfully\e[0m"
