@@ -11,7 +11,7 @@ function main {
     case $1 in
         install)
             install $command
-            npm config set prefix $PREFIX -g;;
+            npm config set prefix $PREFIX;;
         use)
             use_version $command;;
         remove)
