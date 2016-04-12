@@ -63,6 +63,7 @@ function use_version {
         exit 1
     fi
     must_have_version $version
+    warning "Creating symbolic links. This requires root access."
     sudo ln -sf $VERSIONS_DIR/$version/bin/node /usr/local/bin/node-$version
     sudo ln -sf /usr/local/bin/node-$version /usr/local/bin/node
     success "Default version changed to $version"
