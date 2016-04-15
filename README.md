@@ -41,6 +41,12 @@ nodem use v4.4.2 --npm
 nodem remove v4.4.2
 ```
 
+**available**
+
+```shell
+nodem available
+```
+
 **list**
 
 ```shell
@@ -55,7 +61,8 @@ nodem help
 
 
 ### Goals
-- [ ] List all available versions
+- [x] List all available versions
+- [ ] Select version from list
 - [ ] Work for 32 or 64 Linux Archtectures
 
 ### License
