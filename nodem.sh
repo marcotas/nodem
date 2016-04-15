@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-TMP_DIR=~/.nvm/tmp
-VERSIONS_DIR=~/.nvm/versions
-NVM_DIR=~/.nvm
-PREFIX=$NVM_DIR
+TMP_DIR=~/.nodem/tmp
+VERSIONS_DIR=~/.nodem/versions
+nodem_DIR=~/.nodem
+PREFIX=$nodem_DIR
 
 function main {
     command=$2
@@ -32,7 +32,7 @@ function install {
     local targz="node-${version}-linux-x64.tar.gz"
 
     # Download targz to folder $version
-    if [ ! -f ~/.nvm/tmp/$targz ]; then
+    if [ ! -f ~/.nodem/tmp/$targz ]; then
         warning "Downloading node-${version} files"
         wget https://nodejs.org/dist/${version}/node-${version}-linux-x64.tar.gz -P $TMP_DIR
         echo "Download successfully completed"
@@ -61,7 +61,7 @@ function use_version {
     local version=$1
     local option=$2
     if [[ -z "$version" ]]; then
-        warning "No version informed. Type: 'nvm use <version>'"
+        warning "No version informed. Type: 'nodem use <version>'"
         list_versions
         exit 1
     fi
@@ -90,7 +90,7 @@ function must_have_version {
 function list_versions {
     if [[ ! -d $VERSIONS_DIR/$version ]]; then
         warning "No version installed yet"
-        echo "Use nvm install <version> to install some version"
+        echo "Use nodem install <version> to install some version"
         exit 0
     fi
 
@@ -100,8 +100,8 @@ function list_versions {
         echo_bold_if_current $version
     done
     echo
-    echo "Type 'nvm use <version>' to use the specified version."
-    echo "Type 'nvm remove <version>' to remove the specified version."
+    echo "Type 'nodem use <version>' to use the specified version."
+    echo "Type 'nodem remove <version>' to remove the specified version."
 }
 
 function remove_version {
@@ -120,7 +120,7 @@ function remove_version {
 # Shows help command
 function show_help {
     bold "Usage: "
-    echo "    nvm <command> <version> <option>"
+    echo "    nodem <command> <version> <option>"
     echo
     bold "Available commands:"
     echo "  - install <version>     Installs the node <version>."
@@ -167,7 +167,7 @@ function warning {
 main "$@"
 
 # Commands
-# nvm <command> <version> <options>
+# nodem <command> <version> <options>
 # Commands:
 #   - install <version>
 #   - use <version>
@@ -175,4 +175,4 @@ main "$@"
 #   - help
 #
 # Usage:
-#   nvm install v4.4.2
+#   nodem install v4.4.2

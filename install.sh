@@ -8,11 +8,11 @@
 # fi
 
 # This install the mnode command in /usr/bin/mnode
-sudo cp -vf nvm.sh /usr/local/bin/nvm
-sudo chmod +x /usr/local/bin/nvm
+sudo cp -vf nodem.sh /usr/local/bin/nodem
+sudo chmod +x /usr/local/bin/nodem
 
-echo 'export PATH=$HOME/.nvm/bin:$PATH # Add NVM to PATH for scripting' >> ~/.profile
+echo 'export PATH=$HOME/.nodem/bin:$PATH # Add nodem to PATH for scripting' >> ~/.profile
 echo 'source $HOME/.profile' >> ~/.zshrc
 source ~/.profile
 
-echo -e "\e[32mnvm installed successfully\e[0m"
+echo -e "\e[32mnodem installed successfully\e[0m"

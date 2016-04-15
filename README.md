@@ -1,5 +1,5 @@
-# nvm
-Node Version Manager in Bash script. This script doen't need root access for npm or node because they are both installed in ~/.nvm and all it's binaries and packages. Inspired by [n](https://github.com/tj/n/).
+# nodem
+Node Version Manager in Bash script. This script doen't need root access for npm or node because they are both installed in ~/.nodem and all it's binaries and packages. Inspired by [n](https://github.com/tj/n/).
 
 ### Requirements
 This script requires the following programs to work:
@@ -18,7 +18,7 @@ This script requires root access to create symbolic links to /usr/local/bin and 
 Execute the help command to see the available commands:
 
 ```shell
-nvm help
+nodem help
 ```
 
 ## Commands
