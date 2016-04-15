@@ -8,15 +8,16 @@ PREFIX=$nodem_DIR
 NODE_DIST_URL='https://nodejs.org/dist'
 
 function main {
-    command=$2
+    local version=$2
+    local option=$3
     case $1 in
         install)
-            install $command
+            install $version
             npm config set prefix $PREFIX;;
         use)
-            use_version $command $3;;
+            use_version $version $option;;
         remove)
-            remove_version $command;;
+            remove_version $version;;
         list)
             list_installed_versions;;
         available)
@@ -30,7 +31,7 @@ function main {
 # Installs the version <version> specified
 #
 function install {
-    version=$1
+    local version=$1
     exit_if_empty "$version" "version"
 
     local targz="node-v${version}-linux-x64.tar.gz"
@@ -38,9 +39,8 @@ function install {
     # Download targz to folder $version
     if [ ! -f ~/.nodem/tmp/$targz ]; then
         yellow "Downloading node-v${version} files"
-        wget https://nodejs.org/dist/v${version}/node-v${version}-linux-x64.tar.gz -P $TMP_DIR
-        echo "Download successfully completed"
-        echo
+        download $version
+        green "Download successfully completed"
     fi
 
     echo "Extracting files..."
@@ -119,12 +119,15 @@ function list_installed_versions {
 # List available versions from dist dir
 #
 function list_versions {
-    echo "listing available versions"
-    dist_versions=`wget -O- https://nodejs.org/dist/ 2> /dev/null | egrep "</a>" \
+    echo "Listing available versions"
+    dist_versions=`wget --no-check-certificate -O- $NODE_DIST_URL 2> /dev/null | egrep "</a>" \
         | egrep -o '[0-9]+\.[0-9]+\.[0-9]+'\
         | egrep -v '^0\.[0-7]\.'\
         | egrep -v '^0\.8\.[0-5]$'\
         | sort -u -k 1,1n -k 2,2n -k 3,3n -t .`
+    if [[ -z "$dist_versions" ]]; then
+        red "Could not establish connection with $NODE_DIST_URL. Please check your internet connection."
+    fi
     for version in $dist_versions; do
         if is_installed $version; then
             if is_current $version; then
