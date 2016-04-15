@@ -20,25 +20,25 @@ The available commands are:
 **install \<version\>**
 
 ```shell
-nodem install v4.4.2
+nodem install 4.4.2
 ```
 
 **use \<version\> --npm**
 
 ```shell
-nodem use v4.4.2
+nodem use 4.4.2
 ```
 
 or with --npm to also use npm version for this node version
 
 ```shell
-nodem use v4.4.2 --npm
+nodem use 4.4.2 --npm
 ```
 
 **remove \<version\>**
 
 ```shell
-nodem remove v4.4.2
+nodem remove 4.4.2
 ```
 
 **available**
