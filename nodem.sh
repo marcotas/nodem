@@ -5,6 +5,7 @@ TMP_DIR=~/.nodem/tmp
 VERSIONS_DIR=~/.nodem/versions
 nodem_DIR=~/.nodem
 PREFIX=$nodem_DIR
+NODE_DIST_URL='https://nodejs.org/dist'
 
 function main {
     command=$2
@@ -58,6 +59,11 @@ function install {
     rm -rf $TMP_DIR
     use_version $version
     green "Node Version $version successfully installed"
+}
+
+function download {
+    local version=$1
+    wget $NODE_DIST_URL/v${version}/node-v${version}-linux-x64.tar.gz -P $TMP_DIR
 }
 
 function use_version {
@@ -226,6 +232,9 @@ function yellow {
 }
 function bold_yellow {
     echo -e "\e[1;33m${1}\e[0m"
+}
+function red {
+    echo -e "\e[31m${1}\e[0m"
 }
 
 main "$@"
