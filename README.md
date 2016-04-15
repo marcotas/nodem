@@ -15,19 +15,44 @@ Clone this repo, enter in the cloned directory and execute:
 This script requires root access to create symbolic links to /usr/local/bin and /usr/bin. Thats it.
 
 ### Usage
-Execute the help command to see the available commands:
+The available commands are:
+
+**install \<version\>**
+
+```shell
+nodem install v4.4.2
+```
+
+**use \<version\> --npm**
+
+```shell
+nodem use v4.4.2
+```
+
+or with --npm to also use npm version for this node version
+
+```shell
+nodem use v4.4.2 --npm
+```
+
+**remove \<version\>**
+
+```shell
+nodem remove v4.4.2
+```
+
+**list**
+
+```shell
+nodem list
+```
+
+**help**
 
 ```shell
 nodem help
 ```
 
-## Commands
-The available commands are:
- - install \<version\>
- - use \<version\> --npm
- - remove \<version\>
- - list
- - help
 
 ### Goals
 - [ ] List all available versions
