@@ -1,19 +1,29 @@
 #!/usr/bin/env bash
+# Commands
+# nodem <command> <version> <options>
+# Commands:
+#   - install <version>
+#   - use <version> [--npm]
+#   - remove <version>
+#   - help
+#   - available
+#
+# Usage:
+#   nodem install v4.4.2
+
 set -e
 
 TMP_DIR=~/.nodem/tmp
 VERSIONS_DIR=~/.nodem/versions
-nodem_DIR=~/.nodem
-PREFIX=$nodem_DIR
+NODEM_DIR=$HOME/.nodem
 NODE_DIST_URL='https://nodejs.org/dist'
 
-function main {
+function main() {
     local version=$2
     local option=$3
     case $1 in
         install)
-            install $version
-            npm config set prefix $PREFIX;;
+            install $version;;
         use)
             use_version $version $option;;
         remove)
@@ -28,9 +38,33 @@ function main {
 }
 
 #
+# Add files and folders to path
+#
+function setup_files() {
+    # Setup npm's global prefix
+    if has_npm; then npm --global config set prefix $NODEM_DIR; fi
+    # Setup files
+    setup_file "$HOME/.zshrc"
+    setup_file "$HOME/.bashrc"
+}
+
+#
+# Append configurations to a file
+#
+function setup_file() {
+    local file=$1
+    local nodem_config='$PATH:$HOME/.nodem'
+    if [ -f "$file" ]; then
+        if ! file_contains $file $nodem_config; then
+            echo 'export PATH=$PATH:$HOME/.nodem' >> $file
+        fi
+    fi
+}
+
+#
 # Installs the version <version> specified
 #
-function install {
+function install() {
     local version=$1
     exit_if_empty "$version" "version"
 
@@ -57,16 +91,20 @@ function install {
 
     # clean tmp dir
     rm -rf $TMP_DIR
-    use_version $version
+    if ! has_npm; then
+        use_version $version --npm
+    else
+        use_version $version
+    fi
     green "Node Version $version successfully installed"
 }
 
-function download {
+function download() {
     local version=$1
     wget $NODE_DIST_URL/v${version}/node-v${version}-linux-x64.tar.gz -P $TMP_DIR
 }
 
-function use_version {
+function use_version() {
     local version=$1
     local option=$2
     if [[ -z "$version" ]]; then
@@ -74,19 +112,28 @@ function use_version {
         list_installed_versions
         exit 1
     fi
+    mkdir -p $NODEM_DIR/bin
     must_have_version $version
     yellow "Creating symbolic links. This requires root access."
+    # creates /usr/local/bin/node-vX.X.X
+    sudo ln -sf $VERSIONS_DIR/$version/bin/node /usr/local/bin/node-v$version
+    # creates $HOME/.nodem/bin/node-vX.X.X
+    sudo ln -sf $VERSIONS_DIR/$version/bin/node $NODEM_DIR/bin/node
+    # creates /usr/local/bin/node
+    sudo ln -sf /usr/local/bin/node-v$version /usr/local/bin/node
+
+    green "Default version changed to $version"
+
+    export PATH=$NODEM_DIR/bin:$PATH
     if [[ ! -z $option ]]; then
-        sudo ln -sf $VERSIONS_DIR/$version/bin/npm /usr/local/bin/npm
+        sudo ln -sf $VERSIONS_DIR/$version/bin/npm $NODEM_DIR/bin/npm
+        sudo ln -sf $NODEM_DIR/bin/npm /usr/local/bin/npm
         green "Using npm version "`npm -v`
     fi
-    sudo ln -sf $VERSIONS_DIR/$version/bin/node /usr/local/bin/node-v$version
-    sudo ln -sf /usr/local/bin/node-v$version /usr/local/bin/node
-    green "Default version changed to $version"
-    export PATH=$PREFIX/bin:$PATH
+    setup_files
 }
 
-function must_have_version {
+function must_have_version() {
     local version=$1
     if [[ ! -d $VERSIONS_DIR/$version ]]; then
         yellow "Version $version not installed."
@@ -98,7 +145,7 @@ function must_have_version {
 #
 # List installed versions
 #
-function list_installed_versions {
+function list_installed_versions() {
     if [[ ! -d $VERSIONS_DIR/$version ]]; then
         yellow "No version installed yet"
         echo "Use nodem install <version> to install some version"
@@ -118,7 +165,7 @@ function list_installed_versions {
 #
 # List available versions from dist dir
 #
-function list_versions {
+function list_versions() {
     echo "Listing available versions"
     dist_versions=`wget --no-check-certificate -O- $NODE_DIST_URL 2> /dev/null | egrep "</a>" \
         | egrep -o '[0-9]+\.[0-9]+\.[0-9]+'\
@@ -141,17 +188,17 @@ function list_versions {
     done
 }
 
-function list {
+function list() {
     echo "    $1"
 }
-function list_selected {
+function list_selected() {
     echo "  o $1"
 }
 
 #
 # Removes the specified version
 #
-function remove_version {
+function remove_version() {
     local version=$1
     exit_if_empty $version '<version>'
     must_have_version $version
@@ -167,7 +214,7 @@ function remove_version {
 #
 # Shows help command
 #
-function show_help {
+function show_help() {
     bold "Usage: "
     echo "    nodem <command> <version> <option>"
     echo
@@ -183,7 +230,7 @@ function show_help {
 #
 # Echoes string in bold if it is the current node version
 #
-function echo_bold_if_current {
+function echo_bold_if_current() {
     local version=$1
     local current_version=`node -v 2> /dev/null`
     if [[ $version == ${current_version//v} ]]; then
@@ -193,62 +240,63 @@ function echo_bold_if_current {
     fi
 }
 
-function is_current {
+function is_current() {
     local version=$1
     local current_version=`node -v 2> /dev/null`
     if [[ $version == ${current_version//v} ]]; then
         return 0
-    else
-        return 1
     fi
+    return 1
 }
 
-function is_installed {
+function has_npm() {
+    command -v npm > /dev/null 2>&1
+    return $?
+}
+
+function file_contains() {
+    local file=$1
+    local str=$2
+    if grep -q $str "$file"; then
+        return 0
+    fi
+    return 1
+}
+
+function is_installed() {
     if [[ -d $VERSIONS_DIR/$1 ]]; then
         return 0
-    else
-        return 1
     fi
+    return 1
 }
 
 #
 # Exit script if param is empty
 #
-function exit_if_empty {
+function exit_if_empty() {
     if [[ -z $1 ]]; then
         echo "Missing argument <$2>"
         exit 1
     fi
 }
 
-function bold {
+function bold() {
     echo -e "\e[1m$1\e[21m"
 }
-function green {
+function green() {
     echo -e "\e[32m${1}\e[0m"
 }
-function bold_green {
+function bold_green() {
     echo -e "\e[1;32m${1}\e[0m"
 }
-function yellow {
+function yellow() {
     echo -e "\e[33m${1}\e[0m"
 }
-function bold_yellow {
+function bold_yellow() {
     echo -e "\e[1;33m${1}\e[0m"
 }
-function red {
+function red() {
     echo -e "\e[31m${1}\e[0m"
 }
 
 main "$@"
-
-# Commands
-# nodem <command> <version> <options>
-# Commands:
-#   - install <version>
-#   - use <version>
-#   - remove <version>
-#   - help
-#
-# Usage:
-#   nodem install v4.4.2
