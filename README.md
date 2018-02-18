@@ -62,6 +62,7 @@ nodem help
 
 ### Goals
 - [x] List all available versions
+- [x] Works with Linux and Mac OS systems
 - [ ] Select version from list
 - [ ] Work for 32 or 64 Linux Archtectures
 

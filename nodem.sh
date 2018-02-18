@@ -13,10 +13,21 @@
 
 set -e
 
+function distribution() {
+    unameOut="$(uname -s)"
+    case "${unameOut}" in
+        Linux*)     machine=linux;;
+        Darwin*)    machine=darwin;;
+        *)          machine="INCOMPATIBLE DISTRIBUTION: ${unameOut}"
+    esac
+    echo -e ${machine}
+}
+
 TMP_DIR=~/.nodem/tmp
 VERSIONS_DIR=~/.nodem/versions
 NODEM_DIR=$HOME/.nodem
 NODE_DIST_URL='https://nodejs.org/dist'
+DISTRIBUTION=$(distribution)
 
 function main() {
     local version=$2
@@ -68,7 +79,7 @@ function install() {
     local version=$1
     exit_if_empty "$version" "version"
 
-    local targz="node-v${version}-linux-x64.tar.gz"
+    local targz="node-v${version}-${DISTRIBUTION}-x64.tar.gz"
 
     # Download targz to folder $version
     if [ ! -f ~/.nodem/tmp/$targz ]; then
@@ -86,7 +97,7 @@ function install() {
     local node_dir=$(ls $TMP_DIR)
     rm -rf $VERSIONS_DIR/$version
     mkdir -p $VERSIONS_DIR/$version
-    mv -uf $TMP_DIR/$node_dir/* $VERSIONS_DIR/$version
+    mv -f $TMP_DIR/$node_dir/* $VERSIONS_DIR/$version
     echo "Node version stored in $VERSIONS_DIR/$version"
 
     # clean tmp dir
@@ -101,7 +112,7 @@ function install() {
 
 function download() {
     local version=$1
-    wget $NODE_DIST_URL/v${version}/node-v${version}-linux-x64.tar.gz -P $TMP_DIR
+    wget $NODE_DIST_URL/v${version}/node-v${version}-${DISTRIBUTION}-x64.tar.gz -P $TMP_DIR
 }
 
 function use_version() {
@@ -234,7 +245,7 @@ function echo_bold_if_current() {
     local version=$1
     local current_version=`node -v 2> /dev/null`
     if [[ $version == ${current_version//v} ]]; then
-        bold "    $version"
+        blue "    $version"
     else
         echo "    $version"
     fi
@@ -281,22 +292,28 @@ function exit_if_empty() {
 }
 
 function bold() {
-    echo -e "\e[1m$1\e[21m"
+    echo -e "\033[1m$1\033[0m"
+}
+function blue() {
+    echo -e "\033[34m${1}\033[0m"
+}
+function bold_blue() {
+    echo -e "\033[1;34m${1}\033[0m"
 }
 function green() {
-    echo -e "\e[32m${1}\e[0m"
+    echo -e "\033[32m${1}\033[0m"
 }
 function bold_green() {
-    echo -e "\e[1;32m${1}\e[0m"
+    echo -e "\033[1;32m${1}\033[0m"
 }
 function yellow() {
-    echo -e "\e[33m${1}\e[0m"
+    echo -e "\033[33m${1}\033[0m"
 }
 function bold_yellow() {
-    echo -e "\e[1;33m${1}\e[0m"
+    echo -e "\033[1;33m${1}\033[0m"
 }
 function red() {
-    echo -e "\e[31m${1}\e[0m"
+    echo -e "\033[31m${1}\033[0m"
 }
 
 main "$@"

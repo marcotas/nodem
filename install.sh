@@ -15,4 +15,4 @@ echo 'export PATH=$HOME/.nodem/bin:$PATH # Add nodem to PATH for scripting' >> ~
 echo 'source $HOME/.profile' >> ~/.zshrc
 source ~/.profile
 
-echo -e "\e[32mnodem installed successfully\e[0m"
+echo -e "\033[32mnodem installed successfully\033[0m"
