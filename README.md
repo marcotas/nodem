@@ -7,10 +7,10 @@ This script requires the following programs to work:
  - sudo
 
 ### Instalation
-Clone this repo, enter in the cloned directory and execute:
+Run command on terminal:
 
-```shell
-./install.sh
+```
+wget -O - https://raw.githubusercontent.com/marcoT89/nodem/master/install.sh | bash
 ```
 This script requires root access to create symbolic links to /usr/local/bin and /usr/bin. Thats it.
 
