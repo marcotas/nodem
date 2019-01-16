@@ -45,7 +45,7 @@ function write(text, el, clear, id = null) {
             .replace('\n', "<br />")
             .replace('\1', '<a href="https://github.com/victoreduardobarreto" target="blank">barreto</a>')
             .replace('\2', '<a href="https://github.com/marcoT89" target="blank">marco tulio avila</a>')
-            .replace('\3', '<a onClick="clipboard()" class="text-neon-hover">click to copy command on clipboard</a>')
+            .replace('\3', '<a onClick="clipboard()" class="text-neon-hover">click to copy command to clipboard</a>')
         text = text.substr(1);
         if(!text.length) clearInterval(interval[id]);
     }, 20);
