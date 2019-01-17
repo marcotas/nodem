@@ -33,8 +33,6 @@ body:before {
 .float-panel {
     padding          : 100 70;
     min-height       : 100vh;
-    min-width        : 100vh;
-    overflow         : hidden;
     background-image : linear-gradient(to right, rgba(100,100,100, 0.4), rgba(200,100,100, 0.4));
 }
 
@@ -71,4 +69,26 @@ a {
 
 .text-neon-hover:hover {
     text-decoration : underline;
+}
+
+@media (min-width: 1000px) and (max-width: 1199px) {
+    #brand-title {
+        font-size: 130px ;
+    }
+}
+
+@media (max-width: 767px) {
+    #brand-title {
+        font-size: 90px ;
+    }
+}
+
+@media (max-width: 420px) {
+    #brand-title {
+        font-size: 70px ;
+    }
+
+    #terminal {
+      font-size: 12px;
+    }
 }

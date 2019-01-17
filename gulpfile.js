@@ -9,40 +9,40 @@ gulp.task('styles', () => {
     gulp.src(['src/scss/main.scss'])
         .pipe(sass())
         .pipe(mcss())
-        .pipe(gulp.dest('build/css'))
+        .pipe(gulp.dest('css'))
         .pipe(connect.reload())
 })
 
 gulp.task('fonts', () =>{
     gulp.src(['src/fonts/*'] )
-        .pipe(gulp.dest('build/fonts'))
+        .pipe(gulp.dest('fonts'))
         .pipe(connect.reload())
 })
 
 gulp.task('images', () => {
     gulp.src(['src/images/*'])
-        .pipe(gulp.dest('build/img'))
+        .pipe(gulp.dest('img'))
         .pipe(connect.reload())
 })
 
 gulp.task('pug', () =>{
     gulp.src('src/templates/*.pug')
         .pipe(pug())
-        .pipe(gulp.dest('build'))
+        .pipe(gulp.dest(''))
         .pipe(connect.reload())
 })
 
 gulp.task('js', () => {
     gulp.src(['src/js/*.js'])
         .pipe(uglify())
-        .pipe(gulp.dest('build/js'))
+        .pipe(gulp.dest('js'))
         .pipe(connect.reload())
 })
 
 // server
 gulp.task('server', () => {
     connect.server({
-        root: ['build'],
+        root: ['.'],
         // https: true,
         livereload: true,
         // port: 443,
