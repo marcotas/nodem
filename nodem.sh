@@ -64,7 +64,7 @@ function setup_files() {
 #
 function setup_file() {
     local file=$1
-    local nodem_config='$PATH:$HOME/.nodem'
+    local nodem_config="$PATH:$HOME/.nodem"
     if [ -f "$file" ]; then
         if ! file_contains $file $nodem_config; then
             echo 'export PATH=$PATH:$HOME/.nodem' >> $file
@@ -78,41 +78,63 @@ function setup_file() {
 function install() {
     local version=$1
     exit_if_empty "$version" "version"
-
-    local targz="node-v${version}-${DISTRIBUTION}-x64.tar.gz"
+    local targz
+    targz=$(get_dist_filename "$version")
 
     # Download targz to folder $version
     if [ ! -f ~/.nodem/tmp/$targz ]; then
         yellow "Downloading node-v${version} files"
-        download $version
+        download "$version"
         green "Download successfully completed"
     fi
 
     echo "Extracting files..."
-    tar -xf $TMP_DIR/$targz -C $TMP_DIR
-    rm -f $TMP_DIR/$targz
+    tar -xf "$TMP_DIR/$targz" -C $TMP_DIR
+    rm -f "$TMP_DIR/$targz"
 
     # move dir to proper location with version
     echo "Installing files..."
     local node_dir=$(ls $TMP_DIR)
     rm -rf $VERSIONS_DIR/$version
-    mkdir -p $VERSIONS_DIR/$version
-    mv -f $TMP_DIR/$node_dir/* $VERSIONS_DIR/$version
+    mkdir -p "$VERSIONS_DIR/$version"
+    echo "Moving files to $VERSIONS_DIR/$version"
+    mv -f $TMP_DIR/"$node_dir"/* "$VERSIONS_DIR/$version"
     echo "Node version stored in $VERSIONS_DIR/$version"
 
     # clean tmp dir
     rm -rf $TMP_DIR
     if ! has_npm; then
-        use_version $version --npm
+        use_version "$version" --npm
     else
-        use_version $version
+        use_version "$version"
     fi
     green "Node Version $version successfully installed"
 }
 
 function download() {
     local version=$1
-    wget $NODE_DIST_URL/v${version}/node-v${version}-${DISTRIBUTION}-x64.tar.gz -P $TMP_DIR
+    local arch
+    local filename
+    arch=$(get_arch)
+    filename=$(get_dist_filename "$version")
+    wget "$NODE_DIST_URL/v${version}/${filename}" -P $TMP_DIR
+}
+
+function get_dist_filename() {
+    local version=$1
+    local arch
+    arch=$(get_arch)
+    echo "node-v${version}-${DISTRIBUTION}-${arch}.tar.gz"
+}
+
+function get_arch() {
+    local arch
+    arch=$(uname -m)
+    if [[ $arch == "arm64" ]]; then
+        echo "arm64"
+    else
+        echo "x64"
+    fi
 }
 
 function use_version() {
